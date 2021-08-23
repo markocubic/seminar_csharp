@@ -1,0 +1,70 @@
+﻿@page "/sign-in"
+@using Blog.Models
+@inject IJSRuntime jsRuntime
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+@inject Services.UserService.IUserService UserService
+
+<h3>Sign In</h3>
+
+<EditForm Model="@user" OnValidSubmit="SignInUser">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="username">Username</label>
+        <InputText id="username" @bind-Value="user.UserName" class="form-control" />
+        <ValidationMessage For="@(() => user.UserName)" />
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <InputText id="password" type="password" @bind-Value="user.Password" class="form-control" />
+        <ValidationMessage For="@(() => user.Password)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Sign in</button>
+    <span class="m-3 text-danger">@errorMsg</span>
+</EditForm>
+
+@code {
+    User user = new User();
+    string errorMsg = "";
+
+    private async void SignInUser()
+    {
+        var verifiedUser = verifyUser(user.UserName, user.Password);
+
+        if (verifiedUser == null)
+        {
+            await jsRuntime.InvokeVoidAsync("console.log", "Fetch Failed!");
+        }
+        else
+        {
+            await LocalStorage.SetItemAsync<string>("username", user.UserName);
+            await AuthStateProvider.GetAuthenticationStateAsync();
+
+            NavigationManager.NavigateTo("");
+        }
+    }
+
+    private User verifyUser(string username, string password)
+    {
+        var user = UserService.GetUserByCredentials(username);
+        if (user != null)
+        {
+
+            if (BCrypt.Net.BCrypt.Verify(password, user.Password))
+            {
+                return user;
+            }
+            else
+            {
+                errorMsg = "Wrong password.";
+            }
+        }
+        else
+        {
+            errorMsg = "User with that username doesn't exist.";
+        }
+        return null;
+    }
+}

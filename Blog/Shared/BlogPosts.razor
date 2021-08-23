@@ -1,0 +1,46 @@
+﻿@using Blog.Models
+@inject NavigationManager NavigationManager
+@inject IJSRuntime jsRuntime
+@inject Services.PostService.IPostService PostService
+
+
+@foreach (var post in Posts)
+{
+    <div class="post-item col-12 border p-3 mt-3" @onclick="() => navigateToPost(post.Id)">
+        <div class="post-item-header">
+            <h3>
+                @post.Title
+            </h3>
+            <p>
+                @post.DateCreated
+            </p>
+        </div>
+
+        <div class="post-item-info">
+            <div class="post-item-info-left">
+                @post.Description
+            </div>
+            <div class="post-item-info-right">
+                @post.User.UserName
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Post> Posts = new List<Post>();
+    protected override async Task OnInitializedAsync()
+    {
+        await jsRuntime.InvokeVoidAsync("console.log", "OnInitializedAsync");
+        await jsRuntime.InvokeVoidAsync("console.log", "Test", await PostService.GetPosts());
+
+        Posts = await PostService.GetPosts();
+        await jsRuntime.InvokeVoidAsync("console.log", "Fetch Success!", Posts);
+    }
+
+    void navigateToPost(Guid id)
+    {
+        jsRuntime.InvokeVoidAsync("console.log", "Go to post", id);
+        NavigationManager.NavigateTo("/blog-post/" + id);
+    }
+} 

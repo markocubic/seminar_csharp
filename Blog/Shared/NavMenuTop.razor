@@ -1,0 +1,69 @@
+﻿@inject ILocalStorageService LocalStorage
+@inject ISyncLocalStorageService LocalStorageSync
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
+@inject NavigationManager UriHelper
+@inject IJSRuntime jsRuntime
+
+
+<nav class="navbar navbar-expand navbar-dark bg-info">
+    <a class="h3 text-white text-decoration-none" href="/">Blog</a>
+    <ul class="navbar-nav mr-auto" />
+    <form class="form-inline my-2 my-lg-0">
+        <ul class="navbar-nav mr-auto">
+            <AuthorizeView>
+                <NotAuthorized>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="sign-in">
+                            <span class="nav-link">Sign In</span>
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="sign-up">
+                            <span class="nav-link">Sign Up</span>
+                        </NavLink>
+                    </li>
+                </NotAuthorized>
+                <Authorized>
+                    <li class="nav-item">
+                        <NavLink class="nav-link">
+                            <span class="nav-link text-white">Logged in as: @userName</span>
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" @onclick="Logout" style="cursor:pointer">
+                            <span class="nav-link"><span class="oi oi-account-logout" aria-hidden="true"></span> Logout</span>
+                        </NavLink>
+                    </li>
+                </Authorized>
+            </AuthorizeView>
+        </ul>
+    </form>
+</nav>
+
+@code {
+    string userName;
+    protected override async Task OnInitializedAsync()
+    {
+        userName = await LocalStorage.GetItemAsync<string>("username");
+        await AuthStateProvider.GetAuthenticationStateAsync();
+    }
+
+    protected override void OnInitialized()
+    {
+        UriHelper.LocationChanged += DetectNavigation;
+    }
+
+    private async void DetectNavigation(object sender, LocationChangedEventArgs e)
+    {
+        userName = await LocalStorage.GetItemAsync<string>("username");
+        await AuthStateProvider.GetAuthenticationStateAsync();
+    }
+
+    private async void Logout()
+    {
+        await LocalStorage.RemoveItemAsync("username");
+        await AuthStateProvider.GetAuthenticationStateAsync();
+        NavigationManager.NavigateTo("");
+    }
+}

@@ -1,0 +1,25 @@
+﻿@page "/"
+@inject IJSRuntime jsRuntime
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
+
+<div class="container">
+    <main role="main" class="pb-3">
+        <div class="post-header">
+            <h1>Blog posts</h1>
+            <AuthorizeView>
+                <Authorized>
+                    <button class="btn btn-info h-50 m-1" @onclick="CreateNew">Create new</button>
+                </Authorized>
+            </AuthorizeView>
+        </div>
+        <BlogPosts />
+    </main>
+</div>
+
+@code {
+    private void CreateNew()
+    {
+        NavigationManager.NavigateTo("/create");
+    }
+} 

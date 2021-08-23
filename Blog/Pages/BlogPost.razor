@@ -1,0 +1,99 @@
+﻿@page "/blog-post/{url}"
+@inject Services.PostService.IPostService PostService
+@inject Services.UserService.IUserService UserService
+@inject Services.CommentService.ICommentService CommentService
+@inject NavigationManager NavigationManager
+
+@inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime jsRuntime
+
+<div class="container">
+    <main role="main" class="col-12 border p-3 mt-3">
+        <div class="post-header">
+            <h3 class="post-header-left">@CurrentPost.Title</h3>
+            <div class="post-header-right">
+                <p>@CurrentPost.User.UserName - <i>@CurrentPost.DateCreated</i></p>
+            </div>
+        </div>
+
+        <div class="post-content">
+            @CurrentPost.Content
+        </div>
+    </main>
+    <AuthorizeView>
+        <Authorized Context="Comment">
+            <EditForm Model="@comment" OnValidSubmit="SubmitComment">
+                <DataAnnotationsValidator />
+
+                <div class="form-group mt-2 d-flex flex-row">
+                    <InputTextArea id="content" @bind-Value="comment.Text" placeholder="Leave a comment" class="form-control" />
+                    <button type="submit" class="btn btn-primary ml-2 h-50">Submit</button>
+                </div>
+
+            </EditForm>
+        </Authorized>
+    </AuthorizeView>
+    <div>
+        <p class="mt-3 font-weight-bold">Comments:</p>
+        <div>
+            @foreach (var com in comments)
+            {
+                <div class="comment col-12 border p-3 mt-3">
+                    <span class="font-weight-bold mr-1">@com.User.UserName: </span>@com.Text
+                    <div class="float-right m-2"><p><i><small>@com.CommentDate</small></i></p></div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+@code {
+    private Post CurrentPost;
+    private User CurrentUser;
+    Comment comment = new Comment();
+    List<Comment> comments = new List<Comment>();
+
+    [Parameter]
+    public string Url { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await jsRuntime.InvokeVoidAsync("console.log", "OnInitialized Async");
+
+        string userName = await LocalStorage.GetItemAsync<string>("username");
+        CurrentUser = UserService.GetUserByCredentials(userName);
+        await AuthStateProvider.GetAuthenticationStateAsync();
+
+        comments = CommentService.GetCommentsByPostId(Url);
+        await jsRuntime.InvokeVoidAsync("console.log", "GetCommentsByPostId comments: ", comments);
+    }
+    protected override void OnInitialized()
+    {
+        jsRuntime.InvokeVoidAsync("console.log", "OnInitialized");
+        CurrentPost = PostService.GetBlogPostByUrl(Url);
+    }
+
+    private async void SubmitComment()
+    {
+        await jsRuntime.InvokeVoidAsync("console.log", "SubmitComment user: ", CurrentUser);
+        await jsRuntime.InvokeVoidAsync("console.log", "SubmitComment post: ", CurrentPost);
+
+        comment.Post = CurrentPost;
+        comment.User = CurrentUser;
+
+        await jsRuntime.InvokeVoidAsync("console.log", "SubmitComment comment: ", comment);
+        if (comment.Text != null)
+        {
+            CommentService.CreateComment(comment);
+        }
+
+        NavigationManager.NavigateTo("/blog-post/" + Url, forceLoad: true);
+    }
+
+    private async void GetComments()
+    {
+
+    }
+}

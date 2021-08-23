@@ -1,0 +1,53 @@
+﻿@page "/create"
+@using Blog.Models
+@inject IJSRuntime jsRuntime
+@inject ILocalStorageService LocalStorage
+@inject ISyncLocalStorageService LocalStorageSync
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
+@inject Services.UserService.IUserService UserService
+@inject Services.PostService.IPostService PostService
+
+<h3>CreatePost</h3>
+
+<EditForm Model="@newBlogPost" OnValidSubmit="CreateNewBlogPost">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="newBlogPost.Title" class="form-control" />
+        <ValidationMessage For="@(() => newBlogPost.Title)" />
+    </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <InputText id="description" @bind-Value="newBlogPost.Description" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="content">Content</label>
+        <InputTextArea id="content" @bind-Value="newBlogPost.Content" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</EditForm>
+
+@code {
+    Post newBlogPost = new Post();
+    string userName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        userName = await LocalStorage.GetItemAsync<string>("username");
+        await AuthStateProvider.GetAuthenticationStateAsync();
+    }
+
+    public void CreateNewBlogPost()
+    {
+        jsRuntime.InvokeVoidAsync("console.log", "CreateNewBlogPost");
+        jsRuntime.InvokeVoidAsync("console.log", "userName", userName);
+        var user = UserService.GetUserByCredentials(userName);
+        jsRuntime.InvokeVoidAsync("console.log", "CreateNewBlogPost user: ", user);
+        newBlogPost.User = user;
+        jsRuntime.InvokeVoidAsync("console.log", "CreateNewBlogPost newBlogPost: ", newBlogPost);
+        PostService.CreatePost(newBlogPost);
+        NavigationManager.NavigateTo("");
+    }
+}

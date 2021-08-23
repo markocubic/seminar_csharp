@@ -1,0 +1,60 @@
+﻿@page "/sign-up"
+@using Blog.Models
+@inject IJSRuntime jsRuntime
+@inject Services.UserService.IUserService UserService
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+
+<h3>Sign Up</h3>
+
+<EditForm Model="@user" OnValidSubmit="SubmitSignUp">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="username">Username</label>
+        <InputText id="username" @bind-Value="user.UserName" class="form-control" />
+        <ValidationMessage For="@(() => user.UserName)" />
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="user.Email" class="form-control" />
+        <ValidationMessage For="@(() => user.Email)" />
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <InputText id="password" type="password" @bind-Value="user.Password" class="form-control" />
+        <ValidationMessage For="@(() => user.Password)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <span class="m-3 text-danger">@errorMsg</span>
+</EditForm>
+
+@code {
+    User user = new User();
+    string errorMsg = "";
+
+    private void SubmitSignUp()
+    {
+        if (UserService.GetUserByCredentials(user.UserName) == null)
+        {
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            UserService.RegisterUser(user.UserName, user.Email, hashedPassword);
+            jsRuntime.InvokeVoidAsync("console.log", "Created A new User!", user);
+
+            logIn();
+        }
+        else
+        {
+            errorMsg = "User with that username already exists.";
+        }
+    }
+
+    private async void logIn()
+    {
+        await LocalStorage.SetItemAsync<string>("username", user.UserName);
+        await AuthStateProvider.GetAuthenticationStateAsync();
+
+        NavigationManager.NavigateTo("");
+    }
+}

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "0bsexPC6XE7xrrcw6StSDM5FVaeNwTyQwQ4jKXHxwpNQtfQVpskWTVfNLXNWVQitOZQsEy9LKSNrJelY0jzm5A==",
+  "dgSpecHash": "8eJoF0ZwcXfnkN28bDFAJPS46b7ZokkKoTsEpKeY4i0wUlUlPkimdn8nxcSGn53He82BQfTtYpiOtdLgJboYaA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Marko\\Desktop\\Seminar_C#_solo\\finished_version\\seminar_c#\\Blog\\Blog.csproj",
+  "projectFilePath": "C:\\Users\\Marko\\Desktop\\C#\\Seminar_C#_solo\\finished_version\\seminar_c#\\seminar_csharp\\Blog\\Blog.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Marko\\.nuget\\packages\\bcrypt.net-next\\4.0.2\\bcrypt.net-next.4.0.2.nupkg.sha512",
     "C:\\Users\\Marko\\.nuget\\packages\\blazored.localstorage\\4.1.2\\blazored.localstorage.4.1.2.nupkg.sha512",

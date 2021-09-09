@@ -13,84 +13,84 @@ namespace Blog.Shared
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 1 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 2 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 3 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 4 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 5 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 6 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 7 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 8 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 9 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Blog;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 10 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 10 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Blog.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 12 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 12 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Blazored.LocalStorage;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 1 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\Shared\BlogPosts.razor"
+#line 1 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\Shared\BlogPosts.razor"
 using Blog.Models;
 
 #line default
@@ -104,22 +104,56 @@ using Blog.Models;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 30 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\Shared\BlogPosts.razor"
+#line 53 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\Shared\BlogPosts.razor"
        
     private List<Post> Posts = new List<Post>();
-    protected override async Task OnInitializedAsync()
-    {
-        await jsRuntime.InvokeVoidAsync("console.log", "OnInitializedAsync");
-        await jsRuntime.InvokeVoidAsync("console.log", "Test", await PostService.GetPosts());
+    private string SearchValue { get; set; } = "";
+    string loggedInUser;
 
-        Posts = await PostService.GetPosts();
-        await jsRuntime.InvokeVoidAsync("console.log", "Fetch Success!", Posts);
+    enum Buttons
+    {
+        Show = 1,
+        Edit = 2,
+        Delete = 3,
     }
 
-    void navigateToPost(Guid id)
+    protected override async Task OnInitializedAsync()
     {
-        jsRuntime.InvokeVoidAsync("console.log", "Go to post", id);
-        NavigationManager.NavigateTo("/blog-post/" + id);
+        Posts = await PostService.GetPosts();
+
+        loggedInUser = await LocalStorage.GetItemAsync<string>("username");
+    }
+
+    void navigateToPost(Guid id, Buttons button)
+    {
+        if (button == Buttons.Show)
+        {
+            NavigationManager.NavigateTo("/blog-post/" + id);
+        }
+        else if (button == Buttons.Edit)
+        {
+            NavigationManager.NavigateTo("/edit/" + id);
+        }
+        else if (button == Buttons.Delete)
+        {
+            PostService.DeletePost(id.ToString());
+            NavigationManager.NavigateTo("", forceLoad: true);
+        }
+    }
+
+    public bool isPostFromCurrentUser(Guid postId)
+    {
+        Post post = PostService.GetBlogPostByUrl(postId.ToString());
+        if (post.User.UserName == loggedInUser)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void SearchPostsByTitle()
+    {
+        Posts = PostService.SearchPostsByTitle(SearchValue);
     }
 
 #line default
@@ -127,6 +161,8 @@ using Blog.Models;
 #nullable disable
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private Services.PostService.IPostService PostService { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private IJSRuntime jsRuntime { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AuthenticationStateProvider AuthStateProvider { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ILocalStorageService LocalStorage { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavigationManager { get; set; }
     }
 }

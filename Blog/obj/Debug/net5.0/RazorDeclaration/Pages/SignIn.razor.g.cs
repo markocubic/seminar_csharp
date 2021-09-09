@@ -13,84 +13,84 @@ namespace Blog.Pages
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 1 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 2 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 3 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 4 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 5 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 6 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 7 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 8 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 9 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Blog;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 10 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 10 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Blog.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 12 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 12 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Blazored.LocalStorage;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\Pages\SignIn.razor"
+#line 2 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\Pages\SignIn.razor"
 using Blog.Models;
 
 #line default
@@ -105,7 +105,7 @@ using Blog.Models;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 28 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\Pages\SignIn.razor"
+#line 28 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\Pages\SignIn.razor"
        
     User user = new User();
     string errorMsg = "";
@@ -114,28 +114,22 @@ using Blog.Models;
     {
         var verifiedUser = verifyUser(user.UserName, user.Password);
 
-        if (verifiedUser == null)
-        {
-            await jsRuntime.InvokeVoidAsync("console.log", "Fetch Failed!");
-        }
-        else
+        if (verifiedUser)
         {
             await LocalStorage.SetItemAsync<string>("username", user.UserName);
             await AuthStateProvider.GetAuthenticationStateAsync();
-
             NavigationManager.NavigateTo("");
         }
     }
 
-    private User verifyUser(string username, string password)
+    private bool verifyUser(string username, string password)
     {
         var user = UserService.GetUserByCredentials(username);
         if (user != null)
         {
-
             if (BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
-                return user;
+                return true;
             }
             else
             {
@@ -146,7 +140,7 @@ using Blog.Models;
         {
             errorMsg = "User with that username doesn't exist.";
         }
-        return null;
+        return false;
     }
 
 #line default

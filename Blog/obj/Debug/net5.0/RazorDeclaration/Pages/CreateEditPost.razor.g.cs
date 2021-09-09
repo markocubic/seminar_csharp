@@ -13,91 +13,92 @@ namespace Blog.Pages
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 1 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 2 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 3 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 4 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 5 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 6 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 7 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 8 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 9 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Blog;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 10 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 10 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Blog.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 12 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 12 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Blazored.LocalStorage;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\Pages\CreatePost.razor"
+#line 4 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\Pages\CreateEditPost.razor"
 using Blog.Models;
 
 #line default
 #line hidden
 #nullable disable
     [Microsoft.AspNetCore.Components.RouteAttribute("/create")]
-    public partial class CreatePost : Microsoft.AspNetCore.Components.ComponentBase
+    [Microsoft.AspNetCore.Components.RouteAttribute("/edit/{url}")]
+    public partial class CreateEditPost : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -105,27 +106,49 @@ using Blog.Models;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 32 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\Pages\CreatePost.razor"
+#line 53 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\Pages\CreateEditPost.razor"
        
+    [Parameter]
+    public string Url { get; set; }
+
     Post newBlogPost = new Post();
     string userName;
+    string currentPageName = "";
 
     protected override async Task OnInitializedAsync()
     {
         userName = await LocalStorage.GetItemAsync<string>("username");
-        await AuthStateProvider.GetAuthenticationStateAsync();
+        currentPageName = GetCurrentPageName();
+
+        if (currentPageName.Equals(Url))
+        {
+            newBlogPost = PostService.GetBlogPostByUrl(Url);
+        }
     }
 
-    public void CreateNewBlogPost()
+    public void SubmitForm()
     {
-        jsRuntime.InvokeVoidAsync("console.log", "CreateNewBlogPost");
-        jsRuntime.InvokeVoidAsync("console.log", "userName", userName);
-        var user = UserService.GetUserByCredentials(userName);
-        jsRuntime.InvokeVoidAsync("console.log", "CreateNewBlogPost user: ", user);
-        newBlogPost.User = user;
-        jsRuntime.InvokeVoidAsync("console.log", "CreateNewBlogPost newBlogPost: ", newBlogPost);
-        PostService.CreatePost(newBlogPost);
+        if (currentPageName.Equals("create"))
+        {
+            var user = UserService.GetUserByCredentials(userName);
+            newBlogPost.User = user;
+            PostService.CreatePost(newBlogPost);
+
+        }
+        else if (currentPageName.Equals(Url))
+        {
+            PostService.EditPost(Url, newBlogPost);
+        }
         NavigationManager.NavigateTo("");
+    }
+
+    private string GetCurrentPageName()
+    {
+        string path = NavigationManager.Uri;
+        int pos = path.LastIndexOf('/') + 1;
+        path = path.Substring(pos, path.Length - pos);
+
+        return path;
     }
 
 #line default

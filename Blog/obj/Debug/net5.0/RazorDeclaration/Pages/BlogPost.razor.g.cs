@@ -13,84 +13,84 @@ namespace Blog.Pages
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 1 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 2 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 3 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 4 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 5 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 6 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 7 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 8 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 9 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Blog;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 10 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 10 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Blog.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 11 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 11 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Blog.Models;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 12 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\_Imports.razor"
+#line 12 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\_Imports.razor"
 using Blazored.LocalStorage;
 
 #line default
@@ -105,7 +105,7 @@ using Blazored.LocalStorage;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 52 "C:\Users\Marko\Desktop\Seminar_C#_solo\seminar_backend_test\Blog\Pages\BlogPost.razor"
+#line 60 "C:\Users\Marko\Desktop\C#\Seminar_C#_solo\finished_version\seminar_c#\seminar_csharp\Blog\Pages\BlogPost.razor"
        
     private Post CurrentPost;
     private User CurrentUser;
@@ -117,41 +117,32 @@ using Blazored.LocalStorage;
 
     protected override async Task OnInitializedAsync()
     {
-        await jsRuntime.InvokeVoidAsync("console.log", "OnInitialized Async");
-
         string userName = await LocalStorage.GetItemAsync<string>("username");
         CurrentUser = UserService.GetUserByCredentials(userName);
-        await AuthStateProvider.GetAuthenticationStateAsync();
-
+        //await AuthStateProvider.GetAuthenticationStateAsync();
         comments = CommentService.GetCommentsByPostId(Url);
-        await jsRuntime.InvokeVoidAsync("console.log", "GetCommentsByPostId comments: ", comments);
     }
+
     protected override void OnInitialized()
     {
-        jsRuntime.InvokeVoidAsync("console.log", "OnInitialized");
         CurrentPost = PostService.GetBlogPostByUrl(Url);
     }
 
-    private async void SubmitComment()
+    private void SubmitComment()
     {
-        await jsRuntime.InvokeVoidAsync("console.log", "SubmitComment user: ", CurrentUser);
-        await jsRuntime.InvokeVoidAsync("console.log", "SubmitComment post: ", CurrentPost);
-
         comment.Post = CurrentPost;
         comment.User = CurrentUser;
-
-        await jsRuntime.InvokeVoidAsync("console.log", "SubmitComment comment: ", comment);
         if (comment.Text != null)
         {
             CommentService.CreateComment(comment);
         }
-
         NavigationManager.NavigateTo("/blog-post/" + Url, forceLoad: true);
     }
 
-    private async void GetComments()
+    private void DeleteComment(Guid id)
     {
-
+        CommentService.DeleteComment(id);
+        NavigationManager.NavigateTo("/blog-post/" + Url, forceLoad: true);
     }
 
 #line default

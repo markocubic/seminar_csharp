@@ -10,6 +10,10 @@ namespace Blog.Services.PostService
     {
         Task<List<Post>> GetPosts();
         Post GetBlogPostByUrl(string id);
+        List<Post> SearchPostsByTitle(string searchValue);
         void CreatePost(Post post);
+        void EditPost(string url, Post post);
+        void DeletePost(string url);
+
     }
 }

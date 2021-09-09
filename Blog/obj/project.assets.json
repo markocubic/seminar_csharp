@@ -7804,11 +7804,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Marko\\Desktop\\Seminar_C#_solo\\finished_version\\seminar_c#\\Blog\\Blog.csproj",
+      "projectUniqueName": "C:\\Users\\Marko\\Desktop\\C#\\Seminar_C#_solo\\finished_version\\seminar_c#\\seminar_csharp\\Blog\\Blog.csproj",
       "projectName": "Blog",
-      "projectPath": "C:\\Users\\Marko\\Desktop\\Seminar_C#_solo\\finished_version\\seminar_c#\\Blog\\Blog.csproj",
+      "projectPath": "C:\\Users\\Marko\\Desktop\\C#\\Seminar_C#_solo\\finished_version\\seminar_c#\\seminar_csharp\\Blog\\Blog.csproj",
       "packagesPath": "C:\\Users\\Marko\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Marko\\Desktop\\Seminar_C#_solo\\finished_version\\seminar_c#\\Blog\\obj\\",
+      "outputPath": "C:\\Users\\Marko\\Desktop\\C#\\Seminar_C#_solo\\finished_version\\seminar_c#\\seminar_csharp\\Blog\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

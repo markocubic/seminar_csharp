@@ -1,12 +1,25 @@
 ﻿@using Blog.Models
 @inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime jsRuntime
 @inject Services.PostService.IPostService PostService
 
-
+<div class="search input-group">
+    <div class="form-outline">
+        <input type="search"
+               @bind="@SearchValue"
+               @oninput="@((e) => { SearchValue=(string)e.Value;})"
+               id="form1"
+               class="form-control" />
+    </div>
+    <button type="button" class="btn btn-primary" @onclick="() => SearchPostsByTitle()">
+        Search
+    </button>
+</div>
 @foreach (var post in Posts)
 {
-    <div class="post-item col-12 border p-3 mt-3" @onclick="() => navigateToPost(post.Id)">
+    <div class="post-item col-12 border p-3 mt-3">
         <div class="post-item-header">
             <h3>
                 @post.Title
@@ -24,23 +37,67 @@
                 @post.User.UserName
             </div>
         </div>
+        <button class="mt-2 mr-2 btn btn-info h-30" @onclick="() => navigateToPost(post.Id, Buttons.Show)">Show</button>
+        <AuthorizeView>
+            <Authorized>
+                @if (isPostFromCurrentUser(post.Id))
+                {
+                    <button class="mt-2 mr-2 btn btn-warning h-30" @onclick="() => navigateToPost(post.Id, Buttons.Edit)">Edit</button>
+                    <button class="mt-2 mr-2 btn btn-danger h-30" @onclick="() => navigateToPost(post.Id, Buttons.Delete)">Delete</button>
+                }
+            </Authorized>
+        </AuthorizeView>
     </div>
 }
 
 @code {
     private List<Post> Posts = new List<Post>();
-    protected override async Task OnInitializedAsync()
-    {
-        await jsRuntime.InvokeVoidAsync("console.log", "OnInitializedAsync");
-        await jsRuntime.InvokeVoidAsync("console.log", "Test", await PostService.GetPosts());
+    private string SearchValue { get; set; } = "";
+    string loggedInUser;
 
-        Posts = await PostService.GetPosts();
-        await jsRuntime.InvokeVoidAsync("console.log", "Fetch Success!", Posts);
+    enum Buttons
+    {
+        Show = 1,
+        Edit = 2,
+        Delete = 3,
     }
 
-    void navigateToPost(Guid id)
+    protected override async Task OnInitializedAsync()
     {
-        jsRuntime.InvokeVoidAsync("console.log", "Go to post", id);
-        NavigationManager.NavigateTo("/blog-post/" + id);
+        Posts = await PostService.GetPosts();
+
+        loggedInUser = await LocalStorage.GetItemAsync<string>("username");
+    }
+
+    void navigateToPost(Guid id, Buttons button)
+    {
+        if (button == Buttons.Show)
+        {
+            NavigationManager.NavigateTo("/blog-post/" + id);
+        }
+        else if (button == Buttons.Edit)
+        {
+            NavigationManager.NavigateTo("/edit/" + id);
+        }
+        else if (button == Buttons.Delete)
+        {
+            PostService.DeletePost(id.ToString());
+            NavigationManager.NavigateTo("", forceLoad: true);
+        }
+    }
+
+    public bool isPostFromCurrentUser(Guid postId)
+    {
+        Post post = PostService.GetBlogPostByUrl(postId.ToString());
+        if (post.User.UserName == loggedInUser)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void SearchPostsByTitle()
+    {
+        Posts = PostService.SearchPostsByTitle(SearchValue);
     }
 } 

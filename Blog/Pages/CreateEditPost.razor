@@ -1,0 +1,96 @@
+﻿@page "/create"
+@page "/edit/{url}"
+
+@using Blog.Models
+@inject IJSRuntime jsRuntime
+@inject ILocalStorageService LocalStorage
+@inject ISyncLocalStorageService LocalStorageSync
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
+@inject Services.UserService.IUserService UserService
+@inject Services.PostService.IPostService PostService
+
+<div class="container">
+
+    @if (currentPageName.Equals("create"))
+    {
+        <h3 class="mb-4">
+            Create Post
+        </h3>
+    }
+    @if (currentPageName.Equals(Url))
+    {
+        <h3 class="mb-4">
+            Edit Post
+        </h3>
+    }
+    <EditForm Model="@newBlogPost" OnValidSubmit="SubmitForm">
+        <DataAnnotationsValidator />
+        <div class="form-group">
+            <label for="title">Title</label>
+            <InputText id="title" @bind-Value="newBlogPost.Title" class="form-control" />
+            <ValidationMessage For="@(() => newBlogPost.Title)" />
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <InputText id="description" @bind-Value="newBlogPost.Description" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="content">Content</label>
+            <InputTextArea id="content" @bind-Value="newBlogPost.Content" class="form-control" />
+        </div>
+        @if (currentPageName.Equals("create"))
+        {
+            <button type="submit" class="btn btn-primary">Create</button>
+        }
+        @if (currentPageName.Equals(Url))
+        {
+            <button type="submit" class="btn btn-primary">Edit</button>
+        }
+    </EditForm>
+</div>
+
+@code {
+    [Parameter]
+    public string Url { get; set; }
+
+    Post newBlogPost = new Post();
+    string userName;
+    string currentPageName = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        userName = await LocalStorage.GetItemAsync<string>("username");
+        currentPageName = GetCurrentPageName();
+
+        if (currentPageName.Equals(Url))
+        {
+            newBlogPost = PostService.GetBlogPostByUrl(Url);
+        }
+    }
+
+    public void SubmitForm()
+    {
+        if (currentPageName.Equals("create"))
+        {
+            var user = UserService.GetUserByCredentials(userName);
+            newBlogPost.User = user;
+            PostService.CreatePost(newBlogPost);
+
+        }
+        else if (currentPageName.Equals(Url))
+        {
+            PostService.EditPost(Url, newBlogPost);
+        }
+        NavigationManager.NavigateTo("");
+    }
+
+    private string GetCurrentPageName()
+    {
+        string path = NavigationManager.Uri;
+        int pos = path.LastIndexOf('/') + 1;
+        path = path.Substring(pos, path.Length - pos);
+
+        return path;
+    }
+}

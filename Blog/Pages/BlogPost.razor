@@ -39,9 +39,17 @@
         <div>
             @foreach (var com in comments)
             {
-                <div class="comment col-12 border p-3 mt-3">
-                    <span class="font-weight-bold mr-1">@com.User.UserName: </span>@com.Text
-                    <div class="float-right m-2"><p><i><small>@com.CommentDate</small></i></p></div>
+                <div class="comment col-12 border pt-3 mt-3">
+                    <div class="comment-left">
+                        <span class="font-weight-bold mr-1">@com.User.UserName: </span>@com.Text
+                    </div>
+                    <div class="comment-right">
+                        @if (com.User.UserName == CurrentUser.UserName)
+                        {
+                            <button class="comment-button ml-2 mb-2 btn btn-danger" @onclick="() => DeleteComment(com.Id)">Delete</button>
+                        }
+                        <p><i><small class="ml-1">@com.CommentDate</small></i></p>
+                    </div>
                 </div>
             }
 
@@ -60,40 +68,31 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await jsRuntime.InvokeVoidAsync("console.log", "OnInitialized Async");
-
         string userName = await LocalStorage.GetItemAsync<string>("username");
         CurrentUser = UserService.GetUserByCredentials(userName);
-        await AuthStateProvider.GetAuthenticationStateAsync();
-
+        //await AuthStateProvider.GetAuthenticationStateAsync();
         comments = CommentService.GetCommentsByPostId(Url);
-        await jsRuntime.InvokeVoidAsync("console.log", "GetCommentsByPostId comments: ", comments);
     }
+
     protected override void OnInitialized()
     {
-        jsRuntime.InvokeVoidAsync("console.log", "OnInitialized");
         CurrentPost = PostService.GetBlogPostByUrl(Url);
     }
 
-    private async void SubmitComment()
+    private void SubmitComment()
     {
-        await jsRuntime.InvokeVoidAsync("console.log", "SubmitComment user: ", CurrentUser);
-        await jsRuntime.InvokeVoidAsync("console.log", "SubmitComment post: ", CurrentPost);
-
         comment.Post = CurrentPost;
         comment.User = CurrentUser;
-
-        await jsRuntime.InvokeVoidAsync("console.log", "SubmitComment comment: ", comment);
         if (comment.Text != null)
         {
             CommentService.CreateComment(comment);
         }
-
         NavigationManager.NavigateTo("/blog-post/" + Url, forceLoad: true);
     }
 
-    private async void GetComments()
+    private void DeleteComment(Guid id)
     {
-
+        CommentService.DeleteComment(id);
+        NavigationManager.NavigateTo("/blog-post/" + Url, forceLoad: true);
     }
 }

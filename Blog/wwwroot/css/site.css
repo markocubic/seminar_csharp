@@ -67,7 +67,6 @@ a, .btn-link {
 
 .post-item {
     background-color: #f0fafa;
-    cursor: pointer;
 }
 
 .post-item-header {
@@ -91,5 +90,22 @@ a, .btn-link {
 }
 
 .comment {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     background-color: #f0fafa;
+}
+.comment-right {
+    display: flex;
+    flex-direction: column;
+    white-space: nowrap;
+}
+.comment-button {
+    align-self: end;
+    font-size: 14px;
+    width: 70px;
+}
+.search {
+    display: flex;
+    justify-content: end;
 }

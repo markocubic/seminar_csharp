@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Blog.Data;
 using Blog.Models;
-using Microsoft.EntityFrameworkCore;
-
 
 namespace Blog.Services.CommentService
 {
@@ -16,14 +13,23 @@ namespace Blog.Services.CommentService
         {
             _context = context;
         }
-        public List<Comment> GetCommentsByPostId(string url)
+        public List<Comment> GetCommentsByPostId(string id)
         {
-            //return _context.Comments.Where(c => c.Post.Id.ToString().Equals(url));
-            return (List<Comment>)_context.Comments.Where(c => c.Post.Id.ToString().Equals(url)).ToList();
+            return _context.Comments.Where(c => c.Post.Id.ToString().Equals(id)).ToList();
+        }
+        public Comment GetCommentById(Guid id)
+        {
+            return _context.Comments.SingleOrDefault(a => a.Id.Equals(id));
         }
         public void CreateComment(Comment comment)
         {
             _context.Comments.Add(comment);
+            _context.SaveChanges();
+        }
+        public void DeleteComment(Guid id)
+        {
+            Comment comment = GetCommentById(id);
+            _context.Comments.Remove(comment);
             _context.SaveChanges();
         }
     }
